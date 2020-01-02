@@ -14,7 +14,7 @@ names of directories.
 -----------------------------------------------------------------------
 
 All completed renames are output to a completed.txt file in the working
-directory.
+directory with the command that was ran.
 
 @Author: Andrew Quick
 @Date Created: 01/01/2020
