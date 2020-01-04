@@ -80,7 +80,7 @@ def collect_files(path):
 
     fileList = []
 
-    for root, dirs, files in os.walk(path):
+    for root, _, files in os.walk(path):
         for movie in files:
             fileList.append(os.path.join(root, movie))
 
