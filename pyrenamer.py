@@ -147,26 +147,25 @@ def completed(cmd):
     completed.write(completed_msg + '\n')
     completed.close()
 
-print(f'dirs: {args.d}, files: {args.f}, Regex: {args.re}, sub: {args.sub} Path: {args.Path}')
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     if not os.path.isdir(args.Path):
-#         print('The path specified does not exist.')
-#         print('Exiting...')
-#         sys.exit()
+    if not os.path.isdir(args.Path):
+        print('The path specified does not exist.')
+        print('Exiting...')
+        sys.exit()
 
-#     if not args.f or not args.d:
-#         print('You must select either -f for files or -d for directories.')
-#         print('Please use pyrenamer.py --help or -h for usage information.')
-#         print('Exiting...')
-#         sys.exit()
-#     elif args.f and args.d:
-#         print('You must select one or the either, -f or -d .')
-#         print('Please use pyrenamer.py --help or -h for usage information.')
-#         print('Exiting...')
-#         sys.exit()
-#     elif args.f:
-#         rename_path(args.Path, 'files')
-#     elif args.d:
-#         rename_path(args.Path, 'dirs')
+    if not args.f or not args.d:
+        print('You must select either -f for files or -d for directories.')
+        print('Please use pyrenamer.py --help or -h for usage information.')
+        print('Exiting...')
+        sys.exit()
+    elif args.f and args.d:
+        print('You must select one or the either, -f or -d .')
+        print('Please use pyrenamer.py --help or -h for usage information.')
+        print('Exiting...')
+        sys.exit()
+    elif args.f:
+        rename_path(args.Path, 'files')
+    elif args.d:
+        rename_path(args.Path, 'dirs')
