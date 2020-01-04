@@ -7,7 +7,7 @@ source.
 -----------------------------------------------------------------------
 usage: pyrenamer.py [--help -d -f] [-re OPERATION] [-sub VALUE] path
 
-example: "python pyrenamer.py -d -re '(\056)' -sub ' ' D:\\Temp"
+example: "python pyrenamer.py -d -re '\056' -sub '\040 ' D:\\Temp"
 
 The example above replaces all periods with a whitespace in the
 names of directories.
@@ -114,7 +114,7 @@ def rename_path(path, argChoice):
             _fileName = pathlib.Path(item).name
             editedName = regex_rename(_filePath, _fileName)
             run_command(editedName)
-    elif argChoice == 'dirs':
+    if argChoice == 'dirs':
         for item in dirPaths:
             _filePath = pathlib.Path(item).parent
             _fileName = pathlib.Path(item).name
