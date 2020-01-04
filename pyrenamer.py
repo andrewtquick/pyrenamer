@@ -127,7 +127,7 @@ def regex_rename(path, item):
     renamed = re.sub(args.re, args.sub, str(item))
 
     if sys.platform == 'linux' or sys.platform == 'linux2':
-        cmd = f'mv "{path}/{str(item)}" "{renamed}"'
+        cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
     elif sys.platform == 'win32':
         cmd = f'ren "{path}\\{str(item)}" "{renamed}"'
     return cmd
@@ -155,17 +155,8 @@ if __name__ == '__main__':
         print('Exiting...')
         sys.exit()
 
-    if not args.f or not args.d:
-        print('You must select either -f for files or -d for directories.')
-        print('Please use pyrenamer.py --help or -h for usage information.')
-        print('Exiting...')
-        sys.exit()
-    elif args.f and args.d:
-        print('You must select one or the either, -f or -d .')
-        print('Please use pyrenamer.py --help or -h for usage information.')
-        print('Exiting...')
-        sys.exit()
-    elif args.f:
+    if args.f:
         rename_path(args.Path, 'files')
-    elif args.d:
+
+    if args.d:
         rename_path(args.Path, 'dirs')
