@@ -118,25 +118,30 @@ def rename_path(path, argChoice):
         for item in dirPaths:
             _filePath = pathlib.Path(item).parent
             _fileName = pathlib.Path(item).name
-            editedName = regex_rename(_filePath, _fileName)
+            editedName = regex_rename(_filePath, _fileName, argChoice)
             run_command(editedName)
 
 
-def regex_rename(path, item):
+def regex_rename(path, item, argChoice=''):
 
     renamed = re.sub(args.re, args.sub, str(item))
 
-    if sys.platform == 'linux' or sys.platform == 'linux2':
-        cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
-    elif sys.platform == 'win32':
-        cmd = f'ren "{path}\\{str(item)}" "{renamed}"'
+    if (str(path) + str(item)) == (str(path) + str(renamed)):
+        return
+    else:
+        if sys.platform == 'linux' or sys.platform == 'linux2':
+            cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
+
+        if sys.platform == 'win32':
+            cmd = f'ren "{path}\\{str(item)}" "{renamed}"'
     return cmd
 
 
 def run_command(cmd):
 
-    Popen(cmd, shell=True).wait()
-    completed(cmd)
+    if not cmd == None:
+        Popen(cmd, shell=True).wait()
+        completed(cmd)
 
 
 def completed(cmd):
