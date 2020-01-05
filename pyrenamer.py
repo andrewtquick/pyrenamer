@@ -130,7 +130,10 @@ def regex_rename(path, item, argChoice=''):
         return
     else:
         if sys.platform == 'linux' or sys.platform == 'linux2':
-            cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
+            if argChoice == 'dirs'
+                cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}/"'
+            else:
+                cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
 
         if sys.platform == 'win32':
             cmd = f'ren "{path}\\{str(item)}" "{renamed}"'
