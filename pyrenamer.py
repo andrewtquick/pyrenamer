@@ -144,7 +144,7 @@ def regex_rename(path, item, argChoice=''):
 def run_command(cmd):
 
     if not cmd == None:
-        Popen(cmd, shell=True).wait()
+        Popen(cmd).wait()
         completed(cmd)
 
 
