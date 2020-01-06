@@ -119,20 +119,19 @@ def rename_path(path, argChoice):
             _filePath = pathlib.Path(item).parent
             _fileName = pathlib.Path(item).name
             editedName = regex_rename(_filePath, _fileName, argChoice)
-            run_command(editedName)
+            # run_command(editedName)
 
 
 def regex_rename(path, item, argChoice=''):
 
     renamed = re.sub(args.re, args.sub, str(item))
-    renamed_value = f'"{path}/{str(item)}" "{path}/{renamed}/"'
 
     if (str(path) + str(item)) == (str(path) + str(renamed)):
         return
     else:
         if sys.platform == 'linux' or sys.platform == 'linux2':
             if argChoice == 'dirs':
-                cmd = f'mv {renamed_value}'
+                cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}/"'
             else:
                 cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
 
@@ -144,7 +143,7 @@ def regex_rename(path, item, argChoice=''):
 def run_command(cmd):
 
     if not cmd == None:
-        Popen(cmd).wait()
+        os.system(cmd)
         completed(cmd)
 
 
