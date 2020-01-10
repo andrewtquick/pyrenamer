@@ -1,23 +1,7 @@
 '''
-Please review the README.md for proper usage. Rename directories and files using
-regular expressions substitution. If you need assistance with creating your
-regular expression operation, visit http://www.regexr.com or your favorite
-source.
-
------------------------------------------------------------------------
-usage: pyrenamer.py [--help -d -f] [-re OPERATION] [-sub VALUE] path
-
-example: "python pyrenamer.py -d -re '\056' -sub '\040 ' D:\\Temp"
-
-The example above replaces all periods with a whitespace in the
-names of directories.
------------------------------------------------------------------------
-
-All completed renames are output to a completed.txt file in the working
-directory with the command that was ran.
-
 @Author: Andrew Quick
 @Date Created: 01/01/2020
+@Date Updated: 01/10/2020
 @github.com/andrewtquick
 '''
 
@@ -112,9 +96,14 @@ def regex_rename(path: str) -> str:
 
 def run_command(path, rename):
 
+    extensions = ['.mp4', '.txt', '.mkv', 'avi']
+
     if sys.platform == 'linux' or sys.platform == 'linux2':
         if args.f:
-            Popen(f'mv "{path}" "{rename}"', shell=True).wait()
+            if name.endswith(tuple(extensions)):
+                filename, fileext = name.rsplit('.', 1)
+                destname = f'{filename.strip()}.{fileext}'
+            Popen(f'mv "{path}" "{destname}"', shell=True).wait()
             completed(path, rename)
         else:
             Popen(f'mv "{path}" "{rename}/"', shell=True).wait()
@@ -122,8 +111,14 @@ def run_command(path, rename):
 
     if sys.platform == 'win32':
         name = pathlib.Path(rename).name
-        # Popen(f'ren "{path}" "{name}"', shell=True).wait()
-        completed(path, name)
+        if name.endswith(tuple(extensions)):
+            filename, fileext = name.rsplit('.', 1)
+            destname = f'{filename.strip()}.{fileext}'
+            Popen(f'ren "{path}" "{destname}"', shell=True).wait()
+            completed(path, destname)
+        else:
+            Popen(f'ren "{path}" "{name}"', shell=True).wait()
+            completed(path, name)
 
 
 def completed(path, name):
