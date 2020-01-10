@@ -94,15 +94,12 @@ def regex_rename(path: str) -> str:
         run_command(item, regex_replace)
 
 
-def run_command(path, rename):
-
-    extensions = ['.mp4', '.txt', '.mkv', 'avi']
+def run_command(path: str, rename: str) -> None:
 
     if sys.platform == 'linux' or sys.platform == 'linux2':
         if args.f:
-            if name.endswith(tuple(extensions)):
-                filename, fileext = name.rsplit('.', 1)
-                destname = f'{filename.strip()}.{fileext}'
+            filename, fileext = rename.rsplit('.', 1)
+            destname = f'{filename.strip()}.{fileext}'
             Popen(f'mv "{path}" "{destname}"', shell=True).wait()
             completed(path, rename)
         else:
@@ -111,7 +108,7 @@ def run_command(path, rename):
 
     if sys.platform == 'win32':
         name = pathlib.Path(rename).name
-        if name.endswith(tuple(extensions)):
+        if args.f:
             filename, fileext = name.rsplit('.', 1)
             destname = f'{filename.strip()}.{fileext}'
             Popen(f'ren "{path}" "{destname}"', shell=True).wait()
@@ -121,7 +118,7 @@ def run_command(path, rename):
             completed(path, name)
 
 
-def completed(path, name):
+def completed(path: str, name: str) -> None:
 
     now = datetime.datetime.now()
     completed = open('completed.txt', 'a')
