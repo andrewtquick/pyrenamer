@@ -1,69 +1,41 @@
 '''
-Rename directories and files using regular expressions
-substitution. If you need assistance with creating your regular
-expression operation, visit http://www.regexr.com or your favorite
-source.
-
------------------------------------------------------------------------
-usage: pyrenamer.py [--help -d -f] [-re OPERATION] [-sub VALUE] path
-
-example: "python pyrenamer.py -d -re '\056' -sub '\040 ' D:\\Temp"
-
-The example above replaces all periods with a whitespace in the
-names of directories.
------------------------------------------------------------------------
-
-All completed renames are output to a completed.txt file in the working
-directory with the command that was ran.
-
 @Author: Andrew Quick
 @Date Created: 01/01/2020
+@Date Updated: 01/10/2020
 @github.com/andrewtquick
 '''
 
 import re
 import os
 import sys
-from subprocess import Popen
 import datetime
 import argparse
 import pathlib
+from subprocess import Popen
 
 
 parser = argparse.ArgumentParser(
     prog='pyrenamer',
-    usage='pyrenamer.py [--help -d -f] [-re OPERATION] [-sub VALUE] path',
-    description='''Rename directories and files using regular expressions
-    substitution. If you need assistance with creating your regular
-    expression operation, visit http://www.regexr.com or your favorite
-    source.''',
+    usage='pyrenamer.py [--help -d -f] <path> <filters> <replace>',
+    description='''Please review the README.md for proper usage. Rename
+    directories and files using regular expressions substitution. If you need
+    assistance with creating your regular expression operation, visit
+    http://www.regexr.com or your favorite source.''',
     epilog='''PyRenamer by Andrew Quick || github.com/andrewtquick''')
 
 parser.add_argument(
     '-d',
     '-dirs',
     action='store_true',
-    help='use to rename directories')
+    help='use to rename directories'
+)
 
 parser.add_argument(
     '-f',
     '-files',
     action='store_true',
-    help='use to rename files')
-
-parser.add_argument(
-    '-re',
-    metavar='OPERATION',
-    action='store',
-    help='string, regular expression operation',
-    required=True)
-
-parser.add_argument(
-    '-sub',
-    metavar='VALUE',
-    action='store',
-    help='string, replace with input for operation',
-    required=True)
+    help='use to rename files'
+)
 
 parser.add_argument(
     'Path',
@@ -71,100 +43,91 @@ parser.add_argument(
     action='store',
     type=str,
     nargs='?',
-    help='string, path (ex. C:/<my directory> or /home/<user>/<directory>)')
+    help='string, path (ex. C:/<my directory> or /home/<user>/<directory>)'
+)
+
+parser.add_argument(
+    'filters',
+    action='store',
+    help='file, file list entry as .txt'
+)
+
+parser.add_argument(
+    'replace',
+    action='store',
+    help='string, replace match with entry'
+)
 
 args = parser.parse_args()
 
+if not os.path.isdir(args.Path):
+    print('The path specified does not exist.')
+    print('Exiting...')
+    sys.exit()
 
-def collect_files(path):
 
-    fileList = []
+def collect_files(path: str) -> list:
+
+    file_list = []
 
     for root, _, files in os.walk(path):
-        for movie in files:
-            fileList.append(os.path.join(root, movie))
+        if args.f:
+            for item in files:
+                file_list.append(os.path.join(root, item))
+        else:
+            file_list.append(root)
 
-    if path in fileList:
-        fileList.remove(path)
+    if path in file_list:
+        file_list.remove(path)
 
-    return fileList
-
-
-def collect_dirs(path):
-
-    dirList = []
-
-    for root, _, _ in os.walk(path):
-        dirList.append(root)
-
-    if path in dirList:
-        dirList.remove(path)
-
-    return dirList
+    return file_list
 
 
-def rename_path(path, argChoice):
+def regex_rename(path: str) -> str:
 
-    filePaths = collect_files(path)
-    dirPaths = collect_dirs(path)
+    file_collection = collect_files(path)
+    filters = open(args.filters, 'r').read().splitlines()
+    regex_compile = re.compile(r'|'.join(filters))
 
-    if argChoice == 'files':
-        for item in filePaths:
-            _filePath = pathlib.Path(item).parent
-            _fileName = pathlib.Path(item).name
-            editedName = regex_rename(_filePath, _fileName)
-            run_command(editedName)
-    if argChoice == 'dirs':
-        for item in dirPaths:
-            _filePath = pathlib.Path(item).parent
-            _fileName = pathlib.Path(item).name
-            editedName = regex_rename(_filePath, _fileName, argChoice)
-            # run_command(editedName)
+    for item in file_collection:
+        regex_replace = re.sub(regex_compile, args.replace, item)
+        run_command(item, regex_replace)
 
 
-def regex_rename(path, item, argChoice=''):
+def run_command(path, rename):
 
-    renamed = re.sub(args.re, args.sub, str(item))
+    extensions = ['.mp4', '.txt', '.mkv', 'avi']
 
-    if (str(path) + str(item)) == (str(path) + str(renamed)):
-        return
-    else:
-        if sys.platform == 'linux' or sys.platform == 'linux2':
-            if argChoice == 'dirs':
-                cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}/"'
-            else:
-                cmd = f'mv "{path}/{str(item)}" "{path}/{renamed}"'
+    if sys.platform == 'linux' or sys.platform == 'linux2':
+        if args.f:
+            if name.endswith(tuple(extensions)):
+                filename, fileext = name.rsplit('.', 1)
+                destname = f'{filename.strip()}.{fileext}'
+            Popen(f'mv "{path}" "{destname}"', shell=True).wait()
+            completed(path, rename)
+        else:
+            Popen(f'mv "{path}" "{rename}/"', shell=True).wait()
+            completed(path, rename)
 
-        if sys.platform == 'win32':
-            cmd = f'ren "{path}\\{str(item)}" "{renamed}"'
-    return cmd
+    if sys.platform == 'win32':
+        name = pathlib.Path(rename).name
+        if name.endswith(tuple(extensions)):
+            filename, fileext = name.rsplit('.', 1)
+            destname = f'{filename.strip()}.{fileext}'
+            Popen(f'ren "{path}" "{destname}"', shell=True).wait()
+            completed(path, destname)
+        else:
+            Popen(f'ren "{path}" "{name}"', shell=True).wait()
+            completed(path, name)
 
 
-def run_command(cmd):
-
-    if not cmd == None:
-        os.system(cmd)
-        completed(cmd)
-
-
-def completed(cmd):
+def completed(path, name):
 
     now = datetime.datetime.now()
     completed = open('completed.txt', 'a')
-    completed_msg = f'{now} :: Completed :: {cmd}'
+    completed_msg = f'{now} :: Completed :: {path} {name}'
     completed.write(completed_msg + '\n')
     completed.close()
 
 
-if __name__ == '__main__':
-
-    if not os.path.isdir(args.Path):
-        print('The path specified does not exist.')
-        print('Exiting...')
-        sys.exit()
-
-    if args.f:
-        rename_path(args.Path, 'files')
-
-    if args.d:
-        rename_path(args.Path, 'dirs')
+regex_rename(args.Path)
