@@ -1,7 +1,7 @@
 '''
 @Author: Andrew Quick
 @Date Created: 01/01/2020
-@Date Updated: 01/10/2020
+@Date Updated: 01/11/2020
 @github.com/andrewtquick
 '''
 
@@ -91,7 +91,8 @@ def regex_rename(path: str) -> str:
 
     for item in file_collection:
         regex_replace = re.sub(regex_compile, args.replace, item)
-        run_command(item, regex_replace)
+        if item != regex_replace:
+            run_command(item, regex_replace)
 
 
 def run_command(path: str, rename: str) -> None:
@@ -114,7 +115,8 @@ def run_command(path: str, rename: str) -> None:
             Popen(f'ren "{path}" "{destname}"', shell=True).wait()
             completed(path, destname)
         else:
-            Popen(f'ren "{path}" "{name}"', shell=True).wait()
+            destname = name.strip()
+            Popen(f'ren "{path}" "{destname}"', shell=True).wait()
             completed(path, name)
 
 
