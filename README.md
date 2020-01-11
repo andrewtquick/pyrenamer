@@ -40,7 +40,7 @@ optional arguments:
   -f, -files  use to rename files
 ```
 
-##### Directory rename usage hint:
+##### - Directory rename usage hint:
 
 Replace all directory names from your matches in your filters.txt file to a whitespace
 
@@ -48,12 +48,12 @@ Replace all directory names from your matches in your filters.txt file to a whit
 pyrenamer.py -d /home/user/path/ filters.txt '\040'
 ```
 
-##### File rename usage hint:
+##### - File rename usage hint:
 
 Replace all file names from your matches in your filters.txt file to Today-9AM
 
 ```sh
-pyrenamer.py -f C:\\My Files\\ filters.txt 'Today-9AM'
+pyrenamer.py -f C:\\My Files\\ filters.txt 'Today\0509AM'
 ```
 
 ## Filters.txt Setup
@@ -67,8 +67,8 @@ There is no limit to the amount of expressions you can include. Please be mindfu
 If the expression does not find a match, the file will be skipped.
 
 ```
-\s\133Testing\135 -> Looking for ' [Testing]'
-\s\s+             -> Looking for '  '
-\sTesting-\135    -> Looking for ' Testing-]'
-(?!\046)\s[a-z]+  -> Looking for words after an ampersand that are lowercase
+\s\133Testing\135   -> Looking for ' [Testing]'
+\s\s                -> Looking for '  '
+\sTesting\055\135   -> Looking for ' Testing-]'
+(?!\046)\s[a-z]+    -> Looking for words after an ampersand that are lowercase
 ```
